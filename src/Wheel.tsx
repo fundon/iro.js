@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { 
+import {
   IroColor,
   cssGradient,
   cssBorderStyles,
@@ -54,7 +54,7 @@ export function IroWheel(props: IroWheelProps) {
       // If the input hit a handle, set it as the active handle, but don't update the color
       if (activeHandle !== null) {
         colorPicker.setActiveColor(activeHandle);
-      } 
+      }
       // If the input didn't hit a handle, set the currently active handle to that position
       else {
         colorPicker.inputActive = true;
@@ -72,62 +72,70 @@ export function IroWheel(props: IroWheelProps) {
   }
 
   return (
-    <IroComponentWrapper {...props} onInput={ handleInput }>
-      {(uid, rootProps, rootStyles) => (
-        <div
-          { ...rootProps }
-          className="IroWheel"
-          style={{
-            width: cssValue(width),
-            height: cssValue(width),
-            position: 'relative',
-            ...rootStyles
-          }} 
-        >
-          <div className="IroWheelHue" style={{
-            ...circleStyles,
-            transform: `rotateZ(${ props.wheelAngle + 90 }deg)`,
-            background: props.wheelDirection === 'clockwise' ? HUE_GRADIENT_CLOCKWISE : HUE_GRADIENT_ANTICLOCKWISE
-          }}/>
-          <div className="IroWheelSaturation" style={{
-            ...circleStyles,
-            background: 'radial-gradient(circle closest-side, #fff, transparent)',
-          }}/>
-          { props.wheelLightness && (
-            <div className="IroWheelLightness" style={{
-              ...circleStyles,
-              background: '#000',
-              opacity: 1 - hsv.v / 100
-            }}/>
-          )}
-          <div className="IroWheelBorder" style={{
-            ...circleStyles,
-            ...cssBorderStyles(props)
-          }}/>
-         { colors.filter(color => color !== activeColor).map(color => (
-           <IroHandle 
-              isActive={ false }
-              index={ color.index }
-              fill={ color.hslString }
-              r={ props.handleRadius }
-              url={ props.handleSvg }
-              props={ props.handleProps }
-              x={ handlePositions[color.index].x }
-              y={ handlePositions[color.index].y }
-            />
-         ))}
-         <IroHandle 
-            isActive={ true }
-            index={ activeColor.index }
-            fill={ activeColor.hslString }
-            r={ props.activeHandleRadius || props.handleRadius }
-            url={ props.handleSvg }
-            props={ props.handleProps }
-            x={ handlePositions[activeColor.index].x }
-            y={ handlePositions[activeColor.index].y }
-          />
-       </div>
-      )}
-    </IroComponentWrapper>
+    <div className="IroSliderWrapper" style={{
+      display: 'flex',
+      alignItems: 'center',
+      position: 'relative'
+    }}>
+      <div className="IroSliderLabel" style={{ width: '50px' }}></div>
+      <IroComponentWrapper {...props} onInput={handleInput}>
+        {(uid, rootProps, rootStyles) => (
+            <div
+              {...rootProps}
+              className="IroWheel"
+              style={{
+                width: cssValue(width),
+                height: cssValue(width),
+                position: 'relative',
+                ...rootStyles
+              }}
+            >
+              <div className="IroWheelHue" style={{
+                ...circleStyles,
+                transform: `rotateZ(${props.wheelAngle + 90}deg)`,
+                background: props.wheelDirection === 'clockwise' ? HUE_GRADIENT_CLOCKWISE : HUE_GRADIENT_ANTICLOCKWISE
+              }} />
+              <div className="IroWheelSaturation" style={{
+                ...circleStyles,
+                background: 'radial-gradient(circle closest-side, #fff, transparent)',
+              }} />
+              {props.wheelLightness && (
+                <div className="IroWheelLightness" style={{
+                  ...circleStyles,
+                  background: '#000',
+                  opacity: 1 - hsv.v / 100
+                }} />
+              )}
+              <div className="IroWheelBorder" style={{
+                ...circleStyles,
+                ...cssBorderStyles(props)
+              }} />
+              {colors.filter(color => color !== activeColor).map(color => (
+                <IroHandle
+                  isActive={false}
+                  index={color.index}
+                  fill={color.hslString}
+                  r={props.handleRadius}
+                  url={props.handleSvg}
+                  props={props.handleProps}
+                  x={handlePositions[color.index].x}
+                  y={handlePositions[color.index].y}
+                />
+              ))}
+              <IroHandle
+                isActive={true}
+                index={activeColor.index}
+                fill={activeColor.hslString}
+                r={props.activeHandleRadius || props.handleRadius}
+                url={props.handleSvg}
+                props={props.handleProps}
+                x={handlePositions[activeColor.index].x}
+                y={handlePositions[activeColor.index].y}
+              />
+          </div>
+        )}
+      </IroComponentWrapper>
+      <div className="IroSliderValue" style={{ width: '50px', position: 'absolute', bottom: 0, right: 30 }}>{activeColor.hexString}</div>
+    </div>
   );
 }

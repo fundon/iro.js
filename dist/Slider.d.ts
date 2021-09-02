@@ -2,6 +2,7 @@ import { h } from 'preact';
 import { SliderShape, SliderType } from '@irojs/iro-core';
 import { IroComponentProps } from './ComponentTypes';
 interface IroSliderProps extends IroComponentProps {
+    label: String;
     sliderType: SliderType;
     sliderShape: SliderShape;
     minTemperature: number;

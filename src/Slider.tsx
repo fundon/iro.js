@@ -4,9 +4,10 @@ import {
   SliderShape,
   SliderType,
   sliderDefaultOptions,
-  getSliderDimensions, 
-  getSliderValueFromInput, 
-  getSliderHandlePosition, 
+  getCurrentSliderValue,
+  getSliderDimensions,
+  getSliderValueFromInput,
+  getSliderHandlePosition,
   getSliderGradient,
   cssBorderStyles,
   cssGradient,
@@ -18,6 +19,7 @@ import { IroComponentProps, IroInputType } from './ComponentTypes';
 import { IroHandle } from './Handle';
 
 interface IroSliderProps extends IroComponentProps {
+  label: String,
   sliderType: SliderType;
   sliderShape: SliderShape;
   minTemperature: number;
@@ -38,52 +40,66 @@ export function IroSlider(props: IroSliderProps) {
     props.onInput(type, props.id);
   }
 
+  let value = Math.round(activeColor[props.sliderType])
+  if (props.sliderType === 'kelvin') {
+    value = getCurrentSliderValue(props, activeColor)
+    value = Math.ceil(value)
+  }
+
   return (
-    <IroComponentWrapper {...props} onInput={ handleInput }>
-      {(uid, rootProps, rootStyles) => (
-        <div
-          { ...rootProps }
-          className="IroSlider"
-          style={{ 
-            position: 'relative',
-            width: cssValue(width),
-            height: cssValue(height),
-            borderRadius: cssValue(radius),
-            // checkered bg to represent alpha
-            background: `conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)`,
-            backgroundSize: '8px 8px',
-            ...rootStyles
-          }}
-        >
-          <div
-            className="IroSliderGradient"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: `100%`,
-              height: `100%`,
-              borderRadius: cssValue(radius),
-              background: cssGradient(
-                'linear', 
-                props.layoutDirection === 'horizontal' ? 'to top' : 'to right',
-                gradient
-              ),
-              ...cssBorderStyles(props)
-            }}
-          />
-          <IroHandle
-            isActive={ true }
-            index={ activeColor.index }
-            r={ props.handleRadius }
-            url={ props.handleSvg }
-            props={ props.handleProps }
-            x={ handlePos.x }
-            y={ handlePos.y } // todo: use percentage
-          />
-        </div>
-      )}
-    </IroComponentWrapper>
+    <div className="IroSliderWrapper" style={{
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: '12px'
+    }}>
+      <div className="IroSliderLabel" style={{ width: '50px', textAlign: "center" }}>{props.label}</div>
+      <IroComponentWrapper {...props} onInput={handleInput}>
+        {(uid, rootProps, rootStyles) => (
+            <div
+              {...rootProps}
+              className="IroSlider"
+              style={{
+                position: 'relative',
+                width: cssValue(width),
+                height: cssValue(height),
+                borderRadius: cssValue(radius),
+                // checkered bg to represent alpha
+                background: `conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)`,
+                backgroundSize: '8px 8px',
+              }}
+            >
+              <div
+                className="IroSliderGradient"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: `100%`,
+                  height: `100%`,
+                  borderRadius: cssValue(radius),
+                  background: cssGradient(
+                    'linear',
+                    props.layoutDirection === 'horizontal' ? 'to top' : 'to right',
+                    gradient
+                  ),
+                  ...cssBorderStyles(props)
+                }}
+              />
+              <IroHandle
+                isActive={true}
+                index={activeColor.index}
+                r={props.handleRadius}
+                url={props.handleSvg}
+                props={props.handleProps}
+                x={handlePos.x}
+                y={handlePos.y} // todo: use percentage
+              />
+            </div>
+
+        )}
+      </IroComponentWrapper>
+      <div className="IroSliderValue" style={{ width: '50px', textAlign: "center" }}>{value}</div>
+    </div>
   );
 }
 
